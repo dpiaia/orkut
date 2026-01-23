@@ -1,0 +1,67 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>orkut - retro profile maker</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'orkut-bg': '#B2C8F1',
+            'orkut-card-bg': '#EFF3FF',
+            'orkut-border': '#BFD0EA',
+            'orkut-text-blue': '#4B68A1',
+            'orkut-pink': '#EA008B',
+            'orkut-sidebar': '#D9E6F7',
+          },
+          fontFamily: {
+            'orkut': ['Arial', 'Verdana', 'Tahoma', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #B2C8F1;
+      font-family: 'Arial', 'Verdana', 'Tahoma', sans-serif;
+    }
+    /* Scrollbar classic feel */
+    ::-webkit-scrollbar {
+      width: 12px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #EFF3FF;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #4B68A1;
+      border: 2px solid #EFF3FF;
+    }
+    .orkut-btn {
+      background: linear-gradient(to bottom, #f7f7f7, #e0e0e0);
+      border: 1px solid #aaa;
+      box-shadow: 1px 1px 0 #fff inset;
+    }
+    .orkut-btn:active {
+      background: #ddd;
+    }
+  </style>
+<script type="importmap">
+{
+  "imports": {
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react": "https://esm.sh/react@^19.2.3",
+    "@google/genai": "https://esm.sh/@google/genai@^1.38.0"
+  }
+}
+</script>
+</head>
+<body>
+  <div id="root"></div>
+</body>
+</html>
