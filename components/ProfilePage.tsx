@@ -1,13 +1,13 @@
 
 import React, { useState } from 'react';
-import { ProfileData, ScreenshotMode } from '../types';
-import Sidebar from './Sidebar';
-import RightSidebar from './RightSidebar';
-import Tabs from './Tabs';
-import ProfileInfo from './ProfileInfo';
-import ScrapsList from './ScrapsList';
-import TestimonialsList from './TestimonialsList';
-import ProfileSummaryHeader from './ProfileSummaryHeader';
+import { ProfileData, ScreenshotMode } from '../types.ts';
+import Sidebar from './Sidebar.tsx';
+import RightSidebar from './RightSidebar.tsx';
+import Tabs from './Tabs.tsx';
+import ProfileInfo from './ProfileInfo.tsx';
+import ScrapsList from './ScrapsList.tsx';
+import TestimonialsList from './TestimonialsList.tsx';
+import ProfileSummaryHeader from './ProfileSummaryHeader.tsx';
 
 interface ProfilePageProps {
   profile: ProfileData;

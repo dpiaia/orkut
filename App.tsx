@@ -1,10 +1,10 @@
 
 import React, { useState } from 'react';
-import { ProfileData, ScreenshotMode } from './types';
-import ProfilePage from './components/ProfilePage';
-import EditorPanel from './components/EditorPanel';
-import Header from './components/Header';
-import LoginPage from './components/LoginPage';
+import { ProfileData, ScreenshotMode } from './types.ts';
+import ProfilePage from './components/ProfilePage.tsx';
+import EditorPanel from './components/EditorPanel.tsx';
+import Header from './components/Header.tsx';
+import LoginPage from './components/LoginPage.tsx';
 import { GoogleGenAI, Type } from "@google/genai";
 
 const INITIAL_PROFILE: ProfileData = {
@@ -78,9 +78,17 @@ const App: React.FC = () => {
   const [screenshotMode, setScreenshotMode] = useState<ScreenshotMode>('none');
   const [isEditorOpen, setIsEditorOpen] = useState(false);
 
+  // Acesso seguro à API Key para evitar erros ReferenceError
+  const getApiKey = () => {
+    try {
+      return (typeof process !== 'undefined' && process.env.API_KEY) || "";
+    } catch (e) {
+      return "";
+    }
+  };
+
   const handleUpdateProfile = (newData: any) => {
     setProfile(prev => {
-      // Deep merge for details and stats
       const updated = { ...prev, ...newData };
       if (newData.details) updated.details = { ...prev.details, ...newData.details };
       if (newData.stats) updated.stats = { ...prev.stats, ...newData.stats };
@@ -96,7 +104,15 @@ const App: React.FC = () => {
 
     setIsLoggingIn(true);
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      const apiKey = getApiKey();
+      if (!apiKey) {
+        console.warn("API Key não configurada. Prosseguindo com dados padrão.");
+        setIsLoggedIn(true);
+        setIsLoggingIn(false);
+        return;
+      }
+
+      const ai = new GoogleGenAI({ apiKey });
       const response = await ai.models.generateContent({
         model: "gemini-3-flash-preview",
         contents: `O usuário acabou de "autorizar" o acesso via ${provider}. 
@@ -176,7 +192,7 @@ const App: React.FC = () => {
       setIsLoggedIn(true);
     } catch (error) {
       console.error("Login simulation error:", error);
-      setIsLoggedIn(true); // Fallback to initial
+      setIsLoggedIn(true); 
     } finally {
       setIsLoggingIn(false);
     }
@@ -187,16 +203,10 @@ const App: React.FC = () => {
       <div className="min-h-screen bg-white flex flex-col items-center justify-center font-orkut p-8 text-center">
         <div className="text-orkut-pink font-bold text-6xl tracking-tighter mb-8 animate-pulse">orkut</div>
         <div className="w-64 h-2 bg-gray-200 rounded-full overflow-hidden mb-4">
-          <div className="h-full bg-orkut-pink animate-[loading_2s_ease-in-out_infinite]"></div>
+          <div className="h-full bg-orkut-pink animate-loading"></div>
         </div>
         <p className="text-orkut-text-blue font-bold text-sm">Autenticando e importando seu perfil...</p>
         <p className="text-gray-400 text-[10px] mt-2 italic">Aguarde enquanto a IA reconstrói sua identidade de 2005.</p>
-        <style>{`
-          @keyframes loading {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-          }
-        `}</style>
       </div>
     );
   }

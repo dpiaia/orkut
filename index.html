@@ -7,6 +7,9 @@
   <title>orkut - retro profile maker</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
+    // Shim para process.env para evitar erros ReferenceError em ambientes de produção como o Vercel
+    window.process = window.process || { env: { API_KEY: "" } };
+    
     tailwind.config = {
       theme: {
         extend: {
@@ -49,6 +52,13 @@
     .orkut-btn:active {
       background: #ddd;
     }
+    @keyframes loading {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+    .animate-loading {
+      animation: loading 2s ease-in-out infinite;
+    }
   </style>
 <script type="importmap">
 {
@@ -63,5 +73,7 @@
 </head>
 <body>
   <div id="root"></div>
+  <!-- Script de entrada necessário para deploy estático -->
+  <script type="module" src="./index.tsx"></script>
 </body>
 </html>
