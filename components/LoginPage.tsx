@@ -132,6 +132,13 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
         <div className="text-[9px] text-gray-400 text-center mt-4">
           © 2005 Google - serviço filiado ao Google
         </div>
+        <div className="mt-4 p-2 bg-blue-50 border border-blue-100 rounded text-center">
+          <p className="text-[10px] text-blue-600 font-medium">
+            <span className="mr-2">✅ Login com Facebook: Ativo</span>
+            <span className="mr-2">|</span>
+            <span className="text-gray-400">Login com Google e TikTok: Em criação</span>
+          </p>
+        </div>
       </footer>
     </div>
   );
