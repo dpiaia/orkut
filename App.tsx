@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import { ProfileData, ScreenshotMode } from './types.ts';
 import ProfilePage from './components/ProfilePage.tsx';
 import EditorPanel from './components/EditorPanel.tsx';
@@ -74,10 +75,20 @@ const INITIAL_PROFILE: ProfileData = {
 };
 
 const App: React.FC = () => {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/privacy" element={<PrivacyPage />} />
+        <Route path="/terms" element={<TermsPage />} />
+        <Route path="/" element={<OrkutApp />} />
+      </Routes>
+    </BrowserRouter>
+  );
+};
+
+const OrkutApp: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
-  const [showPrivacy, setShowPrivacy] = useState(false);
-  const [showTerms, setShowTerms] = useState(false);
   const [profile, setProfile] = useState<ProfileData>(INITIAL_PROFILE);
   const [screenshotMode, setScreenshotMode] = useState<ScreenshotMode>('none');
   const [isEditorOpen, setIsEditorOpen] = useState(false);
@@ -299,14 +310,6 @@ const App: React.FC = () => {
     return () => window.removeEventListener('message', handleMessage);
   }, []);
 
-  if (showPrivacy) {
-    return <PrivacyPage onBack={() => setShowPrivacy(false)} />;
-  }
-
-  if (showTerms) {
-    return <TermsPage onBack={() => setShowTerms(false)} />;
-  }
-
   if (isLoggingIn) {
     return (
       <div className="min-h-screen bg-white flex flex-col items-center justify-center font-orkut p-8 text-center">
@@ -324,8 +327,6 @@ const App: React.FC = () => {
     return (
       <LoginPage 
         onLogin={handleLogin} 
-        onShowPrivacy={() => setShowPrivacy(true)} 
-        onShowTerms={() => setShowTerms(true)}
       />
     );
   }
@@ -382,9 +383,9 @@ const App: React.FC = () => {
                 <span>|</span>
                 <span className="cursor-pointer hover:underline">Centro de segurança</span>
                 <span>|</span>
-                <span onClick={() => setShowPrivacy(true)} className="cursor-pointer hover:underline font-bold">Privacidade (LGPD)</span>
+                <Link to="/privacy" className="cursor-pointer hover:underline font-bold">Privacidade (LGPD)</Link>
                 <span>|</span>
-                <span onClick={() => setShowTerms(true)} className="cursor-pointer hover:underline font-bold">Termos</span>
+                <Link to="/terms" className="cursor-pointer hover:underline font-bold">Termos</Link>
               </div>
               <div className="text-[9px] text-gray-400">
                 © 2005 Google - serviço filiado ao Google

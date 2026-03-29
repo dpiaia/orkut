@@ -1,13 +1,12 @@
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 interface LoginPageProps {
   onLogin: (provider: string) => void;
-  onShowPrivacy: () => void;
-  onShowTerms: () => void;
 }
 
-const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onShowPrivacy, onShowTerms }) => {
+const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
   const friendPhotos = [
     'https://picsum.photos/seed/l1/80/80',
     'https://picsum.photos/seed/l2/80/80',
@@ -127,9 +126,9 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onShowPrivacy, onShowTer
           <span>|</span>
           <span className="cursor-pointer hover:underline">Centro de segurança</span>
           <span>|</span>
-          <span onClick={onShowPrivacy} className="cursor-pointer hover:underline font-bold">Privacidade (LGPD)</span>
+          <Link to="/privacy" className="cursor-pointer hover:underline font-bold">Privacidade (LGPD)</Link>
           <span>|</span>
-          <span onClick={onShowTerms} className="cursor-pointer hover:underline font-bold">Termos</span>
+          <Link to="/terms" className="cursor-pointer hover:underline font-bold">Termos</Link>
         </div>
         <div className="text-[9px] text-gray-400 text-center mt-4">
           © 2005 Google - serviço filiado ao Google

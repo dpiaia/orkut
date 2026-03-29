@@ -1,18 +1,16 @@
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
-interface TermsPageProps {
-  onBack: () => void;
-}
-
-const TermsPage: React.FC<TermsPageProps> = ({ onBack }) => {
+const TermsPage: React.FC = () => {
+  const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-white font-orkut flex flex-col items-center p-4">
       <div className="max-w-3xl w-full bg-orkut-card-bg border border-orkut-border rounded shadow-sm overflow-hidden mt-8">
         <div className="bg-[#D9E6F7] p-3 border-b border-orkut-border flex justify-between items-center">
           <h1 className="text-sm font-bold text-orkut-text-blue uppercase tracking-wider">Termos de Serviço</h1>
           <button 
-            onClick={onBack}
+            onClick={() => navigate(-1)}
             className="text-[11px] text-orkut-text-blue font-bold hover:underline"
           >
             [voltar]
