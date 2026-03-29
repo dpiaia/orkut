@@ -3,9 +3,11 @@ import React from 'react';
 
 interface LoginPageProps {
   onLogin: (provider: string) => void;
+  onShowPrivacy: () => void;
+  onShowTerms: () => void;
 }
 
-const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
+const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onShowPrivacy, onShowTerms }) => {
   const friendPhotos = [
     'https://picsum.photos/seed/l1/80/80',
     'https://picsum.photos/seed/l2/80/80',
@@ -125,9 +127,9 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
           <span>|</span>
           <span className="cursor-pointer hover:underline">Centro de segurança</span>
           <span>|</span>
-          <span className="cursor-pointer hover:underline">Privacidade</span>
+          <span onClick={onShowPrivacy} className="cursor-pointer hover:underline font-bold">Privacidade (LGPD)</span>
           <span>|</span>
-          <span className="cursor-pointer hover:underline">Termos</span>
+          <span onClick={onShowTerms} className="cursor-pointer hover:underline font-bold">Termos</span>
         </div>
         <div className="text-[9px] text-gray-400 text-center mt-4">
           © 2005 Google - serviço filiado ao Google

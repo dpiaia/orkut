@@ -5,6 +5,8 @@ import ProfilePage from './components/ProfilePage.tsx';
 import EditorPanel from './components/EditorPanel.tsx';
 import Header from './components/Header.tsx';
 import LoginPage from './components/LoginPage.tsx';
+import PrivacyPage from './components/PrivacyPage.tsx';
+import TermsPage from './components/TermsPage.tsx';
 import { GoogleGenAI, Type } from "@google/genai";
 
 const INITIAL_PROFILE: ProfileData = {
@@ -74,6 +76,8 @@ const INITIAL_PROFILE: ProfileData = {
 const App: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [showPrivacy, setShowPrivacy] = useState(false);
+  const [showTerms, setShowTerms] = useState(false);
   const [profile, setProfile] = useState<ProfileData>(INITIAL_PROFILE);
   const [screenshotMode, setScreenshotMode] = useState<ScreenshotMode>('none');
   const [isEditorOpen, setIsEditorOpen] = useState(false);
@@ -295,6 +299,14 @@ const App: React.FC = () => {
     return () => window.removeEventListener('message', handleMessage);
   }, []);
 
+  if (showPrivacy) {
+    return <PrivacyPage onBack={() => setShowPrivacy(false)} />;
+  }
+
+  if (showTerms) {
+    return <TermsPage onBack={() => setShowTerms(false)} />;
+  }
+
   if (isLoggingIn) {
     return (
       <div className="min-h-screen bg-white flex flex-col items-center justify-center font-orkut p-8 text-center">
@@ -309,7 +321,13 @@ const App: React.FC = () => {
   }
 
   if (!isLoggedIn) {
-    return <LoginPage onLogin={handleLogin} />;
+    return (
+      <LoginPage 
+        onLogin={handleLogin} 
+        onShowPrivacy={() => setShowPrivacy(true)} 
+        onShowTerms={() => setShowTerms(true)}
+      />
+    );
   }
 
   const getContainerStyle = () => {
@@ -356,6 +374,23 @@ const App: React.FC = () => {
           <main className={`${screenshotMode === 'none' ? 'max-w-[1100px]' : 'w-full'} mx-auto px-2 mt-4`}>
              <ProfilePage profile={profile} screenshotMode={screenshotMode} />
           </main>
+
+          {screenshotMode === 'none' && (
+            <footer className="max-w-[1100px] mx-auto px-4 py-8 border-t border-gray-200 mt-12 flex flex-col items-center">
+              <div className="flex flex-wrap justify-center gap-x-4 gap-y-2 text-[10px] text-orkut-text-blue mb-4">
+                <span className="cursor-pointer hover:underline">Sobre o orkut</span>
+                <span>|</span>
+                <span className="cursor-pointer hover:underline">Centro de segurança</span>
+                <span>|</span>
+                <span onClick={() => setShowPrivacy(true)} className="cursor-pointer hover:underline font-bold">Privacidade (LGPD)</span>
+                <span>|</span>
+                <span onClick={() => setShowTerms(true)} className="cursor-pointer hover:underline font-bold">Termos</span>
+              </div>
+              <div className="text-[9px] text-gray-400">
+                © 2005 Google - serviço filiado ao Google
+              </div>
+            </footer>
+          )}
 
           {screenshotMode !== 'none' && (
             <div className="absolute bottom-8 right-8 text-orkut-pink font-bold text-4xl opacity-50 select-none">
