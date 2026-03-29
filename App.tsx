@@ -217,22 +217,46 @@ const App: React.FC = () => {
 
     if (provider === 'Facebook') {
       try {
-        const response = await fetch('/api/auth/facebook/url');
-        const { url } = await response.json();
+        console.log('Iniciando login com Facebook...');
         
+        // Abrir popup em branco imediatamente para evitar bloqueadores
         const width = 600;
         const height = 700;
         const left = window.screenX + (window.outerWidth - width) / 2;
         const top = window.screenY + (window.outerHeight - height) / 2;
         
-        window.open(
-          url,
+        const popup = window.open(
+          'about:blank',
           'facebook_login',
           `width=${width},height=${height},left=${left},top=${top}`
         );
+
+        if (!popup) {
+          alert('O popup de login foi bloqueado pelo seu navegador. Por favor, autorize popups para este site.');
+          setIsLoggingIn(false);
+          return;
+        }
+
+        popup.document.write('<p style="font-family: sans-serif; text-align: center; margin-top: 50px;">Carregando autenticação...</p>');
+
+        const response = await fetch('/api/auth/facebook/url');
+        
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error(`Erro na API de Auth: ${response.status}`, errorText);
+          popup.close();
+          throw new Error('Servidor de autenticação indisponível');
+        }
+
+        const { url } = await response.json();
+        console.log('URL de Auth recebida:', url);
+        
+        // Redirecionar o popup para a URL real
+        popup.location.href = url;
       } catch (error) {
-        console.error('Error opening Facebook login:', error);
+        console.error('Erro ao abrir login do Facebook:', error);
         // Fallback to simulation if server fails
+        alert('O servidor de autenticação real não respondeu. Usando simulação de perfil...');
         generateOrkutProfile(provider);
       }
       return;
@@ -261,6 +285,13 @@ const App: React.FC = () => {
     };
 
     window.addEventListener('message', handleMessage);
+    
+    // Health check on mount
+    fetch('/api/health')
+      .then(res => res.json())
+      .then(data => console.log('Server Health Check:', data))
+      .catch(err => console.error('Server Health Check Failed:', err));
+
     return () => window.removeEventListener('message', handleMessage);
   }, []);
 

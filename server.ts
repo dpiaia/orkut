@@ -18,14 +18,23 @@ async function startServer() {
   // Use APP_URL from environment if available, otherwise fallback to a generic way to get it
   // (though APP_URL is preferred per instructions)
   const getBaseUrl = (req: express.Request) => {
-    return process.env.APP_URL || `${req.protocol}://${req.get('host')}`;
+    const url = process.env.APP_URL || `${req.protocol}://${req.get('host')}`;
+    return url.endsWith('/') ? url.slice(0, -1) : url;
   };
 
   app.use(express.json());
 
+  // Health check
+  app.get('/api/health', (req, res) => {
+    console.log('Health check requested');
+    res.json({ status: 'ok', env: process.env.NODE_ENV, baseUrl: getBaseUrl(req) });
+  });
+
   // API Routes
   app.get('/api/auth/facebook/url', (req, res) => {
+    console.log('Auth URL requested');
     const redirectUri = `${getBaseUrl(req)}/api/auth/facebook/callback`;
+    console.log('Redirect URI:', redirectUri);
     const params = new URLSearchParams({
       client_id: FB_APP_ID,
       redirect_uri: redirectUri,
@@ -40,6 +49,7 @@ async function startServer() {
   });
 
   app.get('/api/auth/facebook/callback', async (req, res) => {
+    console.log('Auth callback received');
     const { code } = req.query;
     const redirectUri = `${getBaseUrl(req)}/api/auth/facebook/callback`;
 
@@ -125,6 +135,7 @@ async function startServer() {
 
   app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server running on http://localhost:${PORT}`);
+    console.log('Environment APP_URL:', process.env.APP_URL);
   });
 }
 
