@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ProfileData, ScreenshotMode } from './types.ts';
 import ProfilePage from './components/ProfilePage.tsx';
 import EditorPanel from './components/EditorPanel.tsx';
@@ -46,10 +46,10 @@ const INITIAL_PROFILE: ProfileData = {
     { id: 'f3', name: 'Guto', image: 'https://picsum.photos/seed/f3/80/80' },
     { id: 'f4', name: 'Carla', image: 'https://picsum.photos/seed/f4/80/80' },
     { id: 'f5', name: 'Beto', image: 'https://picsum.photos/seed/f5/80/80' },
-    { id: 'f6', name: 'Dani', image: 'https://picsum.photos/seed/f6/80/80' },
-    { id: 'f7', name: 'Rafa', image: 'https://picsum.photos/seed/f7/80/80' },
-    { id: 'f8', name: 'Leo', image: 'https://picsum.photos/seed/f8/80/80' },
-    { id: 'f9', name: 'Ana', image: 'https://picsum.photos/seed/f9/80/80' },
+    { id: 'f6', name: 'Dani', image: 'https://picsum.photos/seed/f7/80/80' },
+    { id: 'f7', name: 'Rafa', image: 'https://picsum.photos/seed/f8/80/80' },
+    { id: 'f8', name: 'Leo', image: 'https://picsum.photos/seed/f9/80/80' },
+    { id: 'f9', name: 'Ana', image: 'https://picsum.photos/seed/f10/80/80' },
   ],
   scraps: [
     { id: '1', author: 'Junior', date: '15 Out 2007', content: 'eai cara, td blz? passa la no meu perfil dps!! vlw flw', avatar: 'https://picsum.photos/seed/p1/40/40' },
@@ -96,28 +96,39 @@ const App: React.FC = () => {
     });
   };
 
-  const handleLogin = async (provider: string) => {
-    if (provider === 'Default') {
-      setIsLoggedIn(true);
-      return;
-    }
-
+  const generateOrkutProfile = async (provider: string, realData?: any) => {
     setIsLoggingIn(true);
     try {
       const apiKey = getApiKey();
       if (!apiKey) {
         console.warn("API Key não configurada. Prosseguindo com dados padrão.");
+        if (realData) {
+           handleUpdateProfile({
+             name: realData.name,
+             profilePic: realData.picture?.data?.url || INITIAL_PROFILE.profilePic
+           });
+        }
         setIsLoggedIn(true);
         setIsLoggingIn(false);
         return;
       }
 
       const ai = new GoogleGenAI({ apiKey });
+      const prompt = realData 
+        ? `O usuário acabou de logar via Facebook. 
+           Dados reais do Facebook: ${JSON.stringify(realData)}.
+           
+           Gere um perfil de Orkut (ano 2005) COMPLETO baseado nesses dados reais. 
+           Traduza os interesses modernos e a bio para a estética do Orkut de 2005 (use gírias como "vlw flw", "add ai", "scraps", "depoimentos").
+           Se o Facebook diz que ele mora em "São Paulo", mantenha. Se o status de relacionamento for "Married", mude para "Casado(a)".
+           Seja muito criativo na "bio" e no "status", fazendo parecer um perfil real de 2005.`
+        : `O usuário acabou de "autorizar" o acesso via ${provider}. 
+           Gere um perfil de Orkut (ano 2005) COMPLETO baseado na estética dessa rede social (${provider}). 
+           Por exemplo, se for TikTok, use gírias modernas adaptadas a 2005. Se for Facebook, seja mais família. Se for Google, seja mais tecnológico.`;
+
       const response = await ai.models.generateContent({
         model: "gemini-3-flash-preview",
-        contents: `O usuário acabou de "autorizar" o acesso via ${provider}. 
-        Gere um perfil de Orkut (ano 2005) COMPLETO baseado na estética dessa rede social (${provider}). 
-        Por exemplo, se for TikTok, use gírias modernas adaptadas a 2005. Se for Facebook, seja mais família. Se for Google, seja mais tecnológico.
+        contents: `${prompt}
         
         Retorne APENAS um objeto JSON com as seguintes chaves: 
         name, status, relationship, city, country, birthdate, gender, fortune, bio, profilePic, 
@@ -160,22 +171,22 @@ const App: React.FC = () => {
       const data = JSON.parse(response.text);
       
       const newProfile: Partial<ProfileData> = {
-        name: data.name,
+        name: realData?.name || data.name,
         status: data.status,
-        relationship: data.relationship,
-        city: data.city,
-        country: data.country,
-        birthdate: data.birthdate,
-        gender: data.gender,
+        relationship: data.relationship || (realData?.relationship_status ? (realData.relationship_status === 'Single' ? 'Solteiro(a)' : realData.relationship_status) : INITIAL_PROFILE.relationship),
+        city: realData?.location?.name?.split(',')[0] || data.city,
+        country: realData?.location?.name?.split(',')[1]?.trim() || data.country,
+        birthdate: realData?.birthday || data.birthdate,
+        gender: realData?.gender === 'male' ? 'Masculino' : (realData?.gender === 'female' ? 'Feminino' : data.gender),
         fortune: data.fortune,
         bio: data.bio,
-        profilePic: data.profilePic || `https://picsum.photos/seed/${provider}/150/150`,
+        profilePic: realData?.picture?.data?.url || data.profilePic || `https://picsum.photos/seed/${provider}/150/150`,
         details: {
           ethnicity: data.ethnicity,
           religion: data.religion,
           humor: data.humor,
           fashion: data.fashion,
-          hometown: data.hometown,
+          hometown: realData?.hometown?.name || data.hometown,
           webpage: data.webpage,
           passions: data.passions,
           sports: data.sports,
@@ -191,12 +202,67 @@ const App: React.FC = () => {
       handleUpdateProfile(newProfile);
       setIsLoggedIn(true);
     } catch (error) {
-      console.error("Login simulation error:", error);
+      console.error("Profile generation error:", error);
       setIsLoggedIn(true); 
     } finally {
       setIsLoggingIn(false);
     }
   };
+
+  const handleLogin = async (provider: string) => {
+    if (provider === 'Default') {
+      setIsLoggedIn(true);
+      return;
+    }
+
+    if (provider === 'Facebook') {
+      try {
+        const response = await fetch('/api/auth/facebook/url');
+        const { url } = await response.json();
+        
+        const width = 600;
+        const height = 700;
+        const left = window.screenX + (window.outerWidth - width) / 2;
+        const top = window.screenY + (window.outerHeight - height) / 2;
+        
+        window.open(
+          url,
+          'facebook_login',
+          `width=${width},height=${height},left=${left},top=${top}`
+        );
+      } catch (error) {
+        console.error('Error opening Facebook login:', error);
+        // Fallback to simulation if server fails
+        generateOrkutProfile(provider);
+      }
+      return;
+    }
+
+    // Other providers still use simulation for now
+    generateOrkutProfile(provider);
+  };
+
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      // Validate origin
+      if (!event.origin.endsWith('.run.app') && !event.origin.includes('localhost')) {
+        return;
+      }
+
+      if (event.data?.type === 'OAUTH_AUTH_SUCCESS') {
+        const userData = event.data.payload;
+        generateOrkutProfile('Facebook', userData);
+      }
+
+      if (event.data?.type === 'OAUTH_AUTH_ERROR') {
+        console.error('OAuth Error:', event.data.error);
+        alert('Erro ao autenticar com Facebook. Tente novamente.');
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, []);
 
   if (isLoggingIn) {
     return (

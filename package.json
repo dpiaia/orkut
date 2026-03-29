@@ -4,14 +4,21 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "tsx server.ts",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start": "tsx server.ts",
+    "lint": "tsc --noEmit"
   },
   "dependencies": {
-    "react-dom": "^19.2.3",
+    "@google/genai": "^1.38.0",
+    "axios": "^1.14.0",
+    "cookie-parser": "^1.4.7",
+    "express": "^5.2.1",
+    "express-session": "^1.19.0",
     "react": "^19.2.3",
-    "@google/genai": "^1.38.0"
+    "react-dom": "^19.2.3",
+    "tsx": "^4.21.0"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",
