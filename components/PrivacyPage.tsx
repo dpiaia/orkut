@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 const PrivacyPage: React.FC = () => {
   const navigate = useNavigate();
@@ -73,7 +73,14 @@ const PrivacyPage: React.FC = () => {
           </section>
 
           <section>
-            <h2 className="font-bold text-orkut-pink mb-2 text-sm">6. Contato</h2>
+            <h2 className="font-bold text-orkut-pink mb-2 text-sm">6. Exclusão de Dados</h2>
+            <p>
+              Você pode solicitar a exclusão de seus dados a qualquer momento. Como não armazenamos dados em servidores permanentes, a exclusão é efetivada ao encerrar sua sessão ou revogar o acesso do aplicativo em sua conta do Facebook. Para instruções detalhadas, visite nossa página de <Link to="/data-deletion" className="text-blue-600 hover:underline font-bold">Exclusão de Dados</Link>.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="font-bold text-orkut-pink mb-2 text-sm">7. Contato</h2>
             <p>
               Para exercer seus direitos ou tirar dúvidas sobre esta política, entre em contato através do e-mail de suporte indicado na plataforma.
             </p>

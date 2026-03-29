@@ -8,6 +8,7 @@ import Header from './components/Header.tsx';
 import LoginPage from './components/LoginPage.tsx';
 import PrivacyPage from './components/PrivacyPage.tsx';
 import TermsPage from './components/TermsPage.tsx';
+import DataDeletionPage from './components/DataDeletionPage.tsx';
 import { GoogleGenAI, Type } from "@google/genai";
 
 const INITIAL_PROFILE: ProfileData = {
@@ -80,6 +81,7 @@ const App: React.FC = () => {
       <Routes>
         <Route path="/privacy" element={<PrivacyPage />} />
         <Route path="/terms" element={<TermsPage />} />
+        <Route path="/data-deletion" element={<DataDeletionPage />} />
         <Route path="/" element={<OrkutApp />} />
       </Routes>
     </BrowserRouter>
@@ -386,6 +388,8 @@ const OrkutApp: React.FC = () => {
                 <Link to="/privacy" className="cursor-pointer hover:underline font-bold">Privacidade (LGPD)</Link>
                 <span>|</span>
                 <Link to="/terms" className="cursor-pointer hover:underline font-bold">Termos</Link>
+                <span>|</span>
+                <Link to="/data-deletion" className="cursor-pointer hover:underline font-bold">Excluir Dados</Link>
               </div>
               <div className="text-[9px] text-gray-400">
                 © 2005 Google - serviço filiado ao Google

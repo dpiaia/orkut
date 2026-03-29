@@ -129,6 +129,8 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
           <Link to="/privacy" className="cursor-pointer hover:underline font-bold">Privacidade (LGPD)</Link>
           <span>|</span>
           <Link to="/terms" className="cursor-pointer hover:underline font-bold">Termos</Link>
+          <span>|</span>
+          <Link to="/data-deletion" className="cursor-pointer hover:underline font-bold">Excluir Dados</Link>
         </div>
         <div className="text-[9px] text-gray-400 text-center mt-4">
           © 2005 Google - serviço filiado ao Google
